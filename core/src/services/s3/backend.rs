@@ -922,6 +922,7 @@ impl Accessor for S3Backend {
                 stat_with_if_none_match: true,
 
                 read: true,
+                read_can_seek: true,
                 read_can_next: true,
                 read_with_range: true,
                 read_with_if_match: true,
@@ -951,6 +952,8 @@ impl Accessor for S3Backend {
 
                 batch: true,
                 batch_max_operations: Some(self.core.batch_max_operations),
+
+                blocking: true,
 
                 ..Default::default()
             });
@@ -1156,9 +1159,16 @@ impl Accessor for S3Backend {
     }
 
     fn blocking_read(&self, path: &str, args: OpRead) -> Result<(RpRead, Self::BlockingReader)> {
+        log::debug!("S3 blocking_read: {}", path);
         self.runtime.block_on(async {
+            log::debug!("blocking_read: {} - start", path);
             let (rp, reader) = self.read(path, args).await?;
             let body_bytes = reader.bytes().await?;
+            log::debug!(
+                "blocking_read: {} - end, bytes len: {}",
+                path,
+                body_bytes.len()
+            );
 
             Ok((rp, body_bytes.reader()))
         })

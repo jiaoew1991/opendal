@@ -46,6 +46,10 @@ use crate::types::opendal_metadata;
 use crate::types::opendal_operator_options;
 use crate::types::opendal_operator_ptr;
 
+#[no_mangle]
+pub unsafe extern "C" fn opendal_init_logger() {
+    env_logger::init();
+}
 /// \brief Construct an operator based on `scheme` and `options`
 ///
 /// Uses an array of key-value pairs to initialize the operator based on provided `scheme`
@@ -235,7 +239,9 @@ pub unsafe extern "C" fn opendal_operator_blocking_read(
 
     let op = (*ptr).as_ref();
     let path = unsafe { std::ffi::CStr::from_ptr(path).to_str().unwrap() };
+    log::debug!("Reading from path: {}", path);
     let data = op.read(path);
+    log::debug!("Read finsihed from path: {}", path);
     match data {
         Ok(d) => {
             let v = Box::new(opendal_bytes::new(d));
@@ -244,10 +250,13 @@ pub unsafe extern "C" fn opendal_operator_blocking_read(
                 code: opendal_code::OPENDAL_OK,
             }
         }
-        Err(e) => opendal_result_read {
-            data: std::ptr::null_mut(),
-            code: opendal_code::from_opendal_error(e),
-        },
+        Err(e) => {
+            log::debug!("Read failed err: {}", e);
+            opendal_result_read {
+                data: std::ptr::null_mut(),
+                code: opendal_code::from_opendal_error(e),
+            }
+        }
     }
 }
 

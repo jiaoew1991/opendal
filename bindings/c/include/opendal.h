@@ -315,6 +315,8 @@ typedef struct opendal_list_entry {
 extern "C" {
 #endif // __cplusplus
 
+void opendal_init_logger(void);
+
 /**
  * \brief Construct an operator based on `scheme` and `options`
  *

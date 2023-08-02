@@ -325,6 +325,7 @@ impl<A: Accessor> OperatorBuilder<A> {
         // Make sure error context layer has been attached.
         OperatorBuilder { accessor }
             .layer(ErrorContextLayer)
+            .layer(LoggingLayer::default())
             .layer(CompleteLayer)
     }
 

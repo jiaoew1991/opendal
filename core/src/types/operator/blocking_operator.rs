@@ -353,6 +353,7 @@ impl BlockingOperator {
     pub fn range_read(&self, path: &str, range: impl RangeBounds<u64>) -> Result<Vec<u8>> {
         let path = normalize_path(path);
 
+        log::debug!("range_read read path: {}", path);
         if !validate_path(&path, EntryMode::FILE) {
             return Err(
                 Error::new(ErrorKind::IsADirectory, "read path is a directory")
@@ -368,6 +369,11 @@ impl BlockingOperator {
             .blocking_read(&path, OpRead::new().with_range(br))?;
 
         let mut buffer = Vec::with_capacity(rp.into_metadata().content_length() as usize);
+        log::debug!(
+            "range_read buffer capacity: {}, size: {}",
+            buffer.capacity(),
+            buffer.len()
+        );
         s.read_to_end(&mut buffer).map_err(|err| {
             Error::new(ErrorKind::Unexpected, "blocking range read failed")
                 .with_operation("BlockingOperator::range_read")
@@ -376,6 +382,7 @@ impl BlockingOperator {
                 .with_context("range", br.to_string())
                 .set_source(err)
         })?;
+        log::debug!("read_to_end finished {}", buffer.len());
 
         Ok(buffer)
     }

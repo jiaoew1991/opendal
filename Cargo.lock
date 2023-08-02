@@ -3098,6 +3098,8 @@ version = "0.38.1"
 dependencies = [
  "bytes",
  "cbindgen",
+ "env_logger",
+ "log",
  "opendal",
 ]
 
