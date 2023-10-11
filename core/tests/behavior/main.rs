@@ -104,7 +104,7 @@ fn main() -> anyhow::Result<()> {
     tests.extend(behavior_test::<services::Atomicserver>());
     #[cfg(feature = "services-azblob")]
     tests.extend(behavior_test::<services::Azblob>());
-    #[cfg(feature = "services-Azdls")]
+    #[cfg(feature = "services-azdls")]
     tests.extend(behavior_test::<services::Azdls>());
     #[cfg(feature = "services-cacache")]
     tests.extend(behavior_test::<services::Cacache>());
@@ -132,6 +132,8 @@ fn main() -> anyhow::Result<()> {
     tests.extend(behavior_test::<services::Ipfs>());
     #[cfg(feature = "services-ipmfs")]
     tests.extend(behavior_test::<services::Ipmfs>());
+    #[cfg(feature = "services-libsql")]
+    tests.extend(behavior_test::<services::Libsql>());
     #[cfg(feature = "services-memcached")]
     tests.extend(behavior_test::<services::Memcached>());
     #[cfg(feature = "services-memory")]
